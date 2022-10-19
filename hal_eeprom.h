@@ -50,16 +50,11 @@ extern void eeprom_init(void);
 extern void eeprom_write(u8 addr, u8 byteValue);
 extern u8 eeprom_read(u8 addr);
 
-extern void eepromP1Write();
-extern void eepromP1Read();
-
-extern void eepromPstatusCheck();
-extern void eepromPstatusWrite(u8 payloadByte);
-
-extern void eepromUnpairDevice();
+extern void eepromDeviceAddrRead(void);
 
 extern void eepromDeviceAddrCpyCheck(void);
 extern void eepromDeviceAddrCpyRead(void);
-extern void eepromDeviceAddrCRC(void);
-extern void eepromDeviceAddrCpyCRC(void);
+extern void eepromDeviceAddrCpyWrite(void);
+extern u8 eepromDeviceAddrCpyAckRead(void);
+extern void eepromDeviceAddrCpyAckWrite(u8);
 #endif

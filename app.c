@@ -113,36 +113,73 @@ void sysInit()
 
 void app_eeprom_check(void)
 {
+	/*
 	u8 i = 0;
 	char tempValue[10];
 	uart_printf("Reading Device Address from EEPROM: ");
 	for (i = 0; i < 4; i++)
 	{
-		intF.eepromAddr[i] = eeprom_read(i);
+		intF.deviceAddr[i] = eeprom_read(i);
 		GCC_CLRWDT();
-		itoa(intF.eepromAddr[i], tempValue, 10);
+		itoa(intF.deviceAddr[i], tempValue, 10);
 		uart_printf(tempValue);
 		uart_printf(" ");
 	}
 	uart_printf("\n");
 	delay(100);
+	*/
+	uart_printf("Checking Device Address: ");
+	eepromDeviceAddrRead();
+	uart_printf(intF.deviceAddr);
+	//eepromDeviceAddrCpyAckRead();
+	// uart_printf("\nDevice Copy Address Ack: ");
+	// uart_send(intF.deviceAddCpyAck);
 
-	uart_printf("Checking Paired Status: ");
-	eepromPstatusCheck();
-	uart_send(intF.p1Status);
-	uart_printf("\n");
+	if(0x40 == intF.deviceAddr[0])
+	{
+		uart_printf("\nThis device address is copied already\n");
+		eepromDeviceAddrCpyRead();
+		uart_printf("Device Address Copy: ");
+		uart_printf(intF.deviceAddrCpy);
+		uart_printf("\nComparing the Address and Address Copy\n");
 
-	if (1 == intF.p1Status)
-	{
-		uart_printf("Device already Paired with: ");
-		eepromP1Read();
-		uart_printf((char *)intF.p1DeviceID);
-		uart_printf("\n");
+		if(!memcmp(intF.deviceAddr, intF.deviceAddrCpy, sizeof(intF.deviceAddr)))
+		{
+			uart_printf("Address Matching\n");
+			intF.deviceAddrCmprF = 0;
+		}
+		else
+		{
+			uart_printf("Address Not Matching\n");
+			intF.deviceAddrCmprF = 1;
+		}
 	}
-	else if (!intF.p1Status)
+
+	else
 	{
-		uart_printf("Device is not Paired Yet\n");
+		uart_printf("The Device address is not Copied yet\nChecking for the first boot: ");
+		uart_send(intF.deviceAddr[0]);
+
+		if(0x41 == intF.deviceAddr[0])
+		{
+			uart_printf("Device is boot for first time\n");
+			eeprom_write(EEPROM_DEVICE_ID_ADDR, MASTER_1);
+			delay(1);
+			eepromDeviceAddrRead();
+			delay(1);
+			//eepromDeviceAddrCpyAckWrite(EEPROM_DEVICE_ADDR_CPY_ACK_VALUE);
+			delay(1);
+			eepromDeviceAddrCpyWrite();
+			delay(1);
+			intF.deviceAddrCmprF = 0;
+		}
+		else
+		{
+			uart_printf("This Device is not Booting for first time, some other issue\n");
+			intF.deviceAddrCmprF = 1;
+		}
 	}
+
 }
 
 void app()
@@ -171,8 +208,8 @@ void app()
 			tempPacketAddr[i] = intF.rxPayload[i + 1];
 
 #if !MODE_FLASHING
-		if ((DOORBELL == tempPacketAddr[0]) && (intF.eepromAddr[1] == tempPacketAddr[1]) &&
-			(intF.eepromAddr[2] == tempPacketAddr[2]) && (intF.eepromAddr[3] == tempPacketAddr[3]))
+		if ((DOORBELL == tempPacketAddr[0]) && (intF.deviceAddr[1] == tempPacketAddr[1]) &&
+			(intF.deviceAddr[2] == tempPacketAddr[2]) && (intF.deviceAddr[3] == tempPacketAddr[3]))
 #elif MODE_FLASHING
 		if ((DOORBELL == tempPacketAddr[0]) && (1 == tempPacketAddr[1]) &&
 			(1 == tempPacketAddr[2]) && (1 == tempPacketAddr[3]))

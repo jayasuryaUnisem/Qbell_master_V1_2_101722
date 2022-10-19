@@ -44,7 +44,7 @@ typedef struct int_flags
     unsigned char battStatusValue;
     unsigned char notifiType;
 
-    unsigned char eepromAddr[5];
+    unsigned char deviceAddr[5];
 
     unsigned char rxPayload[10];
     unsigned char p1DeviceID[5];
@@ -61,8 +61,7 @@ typedef struct int_flags
 
     unsigned char deviceAddCpyAck;
     unsigned char deviceAddrCpy[5];
-    unsigned char deviceAddrCRC;
-    unsigned char deviceAddrCpyCRC;
+    unsigned char deviceAddrCmprF;
 }int_flags;
 
 

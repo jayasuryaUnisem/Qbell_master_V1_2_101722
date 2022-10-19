@@ -6,7 +6,7 @@
 #define IND_PAIRED_CONF                     2
 #define IND_NOTIFI                          3
 #define IND_UNPAIRING                       4
-#define UART_EN                             0 //0 - disable uart, 1 - enable uart
+#define UART_EN                             0//0 - disable uart, 1 - enable uart
 
 extern void app();
 extern void sw0_status_check(void);

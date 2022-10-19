@@ -313,8 +313,8 @@ void DATA_Process(unsigned char *FIFO)
 	{
 		#if !MODE_FLASHING
 		FIFO++;
-		*FIFO = intF.eepromAddr[x];
-		uart_send(intF.eepromAddr[x]);
+		*FIFO = intF.deviceAddr[x];
+		uart_send(intF.deviceAddr[x]);
 		#endif
 		#if MODE_FLASHING
 		FIFO++;

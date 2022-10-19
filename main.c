@@ -27,7 +27,7 @@
 
 //struct define_flag Mflag;
 
-//struct int_flags intF;
+extern int_flags intF;
 
 void main()
 {
@@ -58,7 +58,18 @@ void main()
 		delay(1000);
 		#endif
 		#if 1
-		app();
+
+		if(!intF.deviceAddrCmprF)
+			app();
+		
+		else
+		{
+			ktd_ctrl(RGB_NORMAL_MODE, FADE_INT_1S);
+			ktd_rgb_ctrl(0, 0, 255);
+			delay(3000);
+			ktd_clear();
+			delay(3000);
+		}
 		#endif		
 	}
 }
